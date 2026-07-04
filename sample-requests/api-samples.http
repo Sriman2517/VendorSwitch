@@ -1,0 +1,67 @@
+### Health
+GET http://localhost:5000/health
+
+### Register or update a vendor
+POST http://localhost:5000/vendors
+Content-Type: application/json
+
+{
+  "name": "VendorB",
+  "capability": "PAN_VERIFICATION",
+  "priority": 2,
+  "weight": 30,
+  "costPerRequest": 1.2,
+  "timeoutMs": 3000,
+  "rateLimitPerMinute": 50,
+  "supportedFeatures": ["PAN_STATUS", "NAME_MATCH", "LOW_COST"],
+  "health": {
+    "status": "UP",
+    "avgLatencyMs": 850,
+    "successRate": 99,
+    "errorRate": 1,
+    "availability": 99
+  }
+}
+
+### List vendors
+GET http://localhost:5000/vendors?capability=PAN_VERIFICATION
+
+### Create or update a routing rule
+POST http://localhost:5000/routing-rules
+Content-Type: application/json
+
+{
+  "capability": "PAN_VERIFICATION",
+  "strategy": "weighted",
+  "thresholds": {
+    "maxLatencyMs": 2000,
+    "maxErrorRate": 5,
+    "minAvailability": 95
+  }
+}
+
+### List routing rules
+GET http://localhost:5000/routing-rules?capability=PAN_VERIFICATION
+
+### Route a PAN verification request
+POST http://localhost:5000/route
+Content-Type: application/json
+
+{
+  "capability": "PAN_VERIFICATION",
+  "payload": {
+    "pan": "ABCDE1234F",
+    "name": "Rahul Sharma"
+  },
+  "requirements": {
+    "maxLatencyMs": 2000,
+    "preferLowCost": true,
+    "requiredFeatures": ["PAN_STATUS", "NAME_MATCH"]
+  }
+}
+
+### Metrics
+GET http://localhost:5000/vendor-metrics?capability=PAN_VERIFICATION
+
+### Routing logs
+GET http://localhost:5000/routing-logs?capability=PAN_VERIFICATION&limit=20

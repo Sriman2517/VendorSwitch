@@ -1,0 +1,35 @@
+[
+  {
+    "name": "VendorA",
+    "capability": "PAN_VERIFICATION",
+    "strategyRole": "primary weighted vendor",
+    "weight": 70,
+    "costPerRequest": 1.5,
+    "timeoutMs": 2000,
+    "rateLimitPerMinute": 100,
+    "priority": 1,
+    "supportedFeatures": ["PAN_STATUS", "NAME_MATCH"]
+  },
+  {
+    "name": "VendorB",
+    "capability": "PAN_VERIFICATION",
+    "strategyRole": "fallback and low-latency vendor",
+    "weight": 30,
+    "costPerRequest": 1.2,
+    "timeoutMs": 3000,
+    "rateLimitPerMinute": 50,
+    "priority": 2,
+    "supportedFeatures": ["PAN_STATUS", "NAME_MATCH", "LOW_COST"]
+  },
+  {
+    "name": "VendorC",
+    "capability": "PAN_VERIFICATION",
+    "strategyRole": "lowest-cost fallback vendor",
+    "weight": 20,
+    "costPerRequest": 0.9,
+    "timeoutMs": 2500,
+    "rateLimitPerMinute": 30,
+    "priority": 3,
+    "supportedFeatures": ["PAN_STATUS", "LOW_COST"]
+  }
+]
