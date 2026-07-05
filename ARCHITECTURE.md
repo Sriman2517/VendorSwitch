@@ -27,33 +27,7 @@ flowchart LR
 
 Important: AI does not route requests. AI only helps admins generate rule configs, explain decisions, and analyze vendor health. Actual routing remains rule-based.
 
-## Request Flow
-
-```mermaid
-flowchart TD
-  A[POST /route] --> B[Load rule and vendors]
-  B --> C[Filter ineligible vendors]
-  C --> D[Order by strategy]
-  D --> E[Call vendor]
-  E -->|Success| F[Return standard response]
-  E -->|Failure or timeout| G[Apply fallback strategy]
-  G --> E
-  F --> H[Save log and update metrics]
-```
-
-## Routing Logic
-
-For every request, the routing engine:
-
-1. Loads vendors for the requested capability.
-2. Skips vendors that are disabled, down, rate-limited, too slow, unhealthy, or missing required features.
-3. Orders eligible vendors using the configured strategy.
-4. Calls the first eligible vendor.
-5. If that vendor fails or times out, applies fallback strategy and tries another vendor.
-6. Saves request logs, attempted vendors, routing reason, latency, cost, and response.
-7. Updates metrics and rate-limit usage.
-
-Implemented strategies:
+## Implemented Strategies
 
 - Priority
 - Weighted
