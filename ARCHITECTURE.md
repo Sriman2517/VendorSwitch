@@ -6,22 +6,7 @@ VendorSwitch has a React frontend and an Express/MongoDB backend. The frontend i
 
 ```mermaid
 flowchart LR
-  Dashboard[React Admin Dashboard]
-
-  Dashboard --> VendorsPage[Vendors]
-  Dashboard --> RulesPage[Routing Rules]
-  Dashboard --> RoutePage[Route Request POST /route]
-  Dashboard --> MetricsPage[Metrics]
-  Dashboard --> LogsPage[Logs]
-  Dashboard --> AIPage[AI Assistant]
-
-  VendorsPage --> API[Express API]
-  RulesPage --> API
-  RoutePage --> API
-  MetricsPage --> API
-  LogsPage --> API
-  AIPage --> API
-
+  UI[React Admin Dashboard] --> API[Express API]
   API --> Router[Rule-Based Routing Engine]
   API --> AI[AI Assistant APIs]
 
