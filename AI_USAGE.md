@@ -1,23 +1,46 @@
 # AI Usage
 
-AI assistance was used to structure and implement this assignment. The generated code was reviewed and organized into a clean MERN project with separate models, controllers, routes, services, sample configs, and documentation.
+This project was developed with AI assistance as an engineering productivity tool. AI was used to brainstorm the system design, refine the project structure, review implementation ideas, and improve documentation. All generated code and design decisions were reviewed, modified, tested, and integrated manually.
 
-Core implementation decisions:
+## Development Approach
 
-- Prioritized the 95-mark core evaluation criteria before the 5-mark agentic AI bonus.
-- Implemented routing and failover in `server/src/services/routingEngine.js`.
-- Added metrics tracking through request logs and vendor health updates.
-- Added sample configs and API requests so evaluators can test the project quickly.
+The implementation was completed by prioritizing the core evaluation criteria before adding the optional Agentic AI features.
 
-No real production secrets are included. The MongoDB Atlas URI should be added locally in `server/.env`.
+The project includes:
 
-Gemini API integration:
+- Rule-based vendor routing and failover logic
+- Vendor metrics tracking and health monitoring
+- Request and routing decision logging
+- Sample vendor configurations and API request examples
+- Architecture documentation and routing decision explanations
 
-- The Gemini API key is read only on the backend from `server/.env` as `GEMINI_API_KEY`.
-- The React frontend never stores or sends the API key.
-- AI assistant routes are exposed under `/ai`:
-  - `POST /ai/generate-rule`
-  - `POST /ai/explain-decision`
-  - `POST /ai/vendor-insight`
-- The routing engine remains rule-based. AI responses are used only to recommend, explain, and help configure routing rules.
-- If Gemini is temporarily unavailable, the backend returns deterministic fallback recommendations so the demo page still works.
+The application follows a modular MERN architecture with separate models, controllers, routes, services, and utility modules to keep the codebase organized and maintainable.
+
+## Gemini AI Integration
+
+Gemini is used only for the optional **Agentic AI** features and does **not** participate in runtime vendor selection.
+
+The AI Assistant provides the following capabilities:
+
+- Generate routing rules from natural language
+- Explain why a particular vendor was selected
+- Analyze vendor health and provide recommendations
+
+The routing engine itself remains completely deterministic and rule-based. AI responses are used only to assist administrators and do not influence routing decisions directly.
+
+### AI Endpoints
+
+- `POST /ai/generate-rule`
+- `POST /ai/explain-decision`
+- `POST /ai/vendor-insight`
+
+## Security
+
+- The Gemini API key is stored only on the backend in `server/.env` as `GEMINI_API_KEY`.
+- The React frontend never stores or exposes the API key.
+- No production credentials, secrets, or API keys are included in the repository.
+- The MongoDB Atlas connection string should be configured locally using the `.env` file.
+
+## Fallback Behavior
+
+If the Gemini API is temporarily unavailable, the backend returns deterministic fallback recommendations so that the AI Assistant remains functional for demonstration purposes. The core routing engine continues to operate normally because all vendor selection decisions are performed using configurable routing rules rather than AI.

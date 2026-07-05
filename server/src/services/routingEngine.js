@@ -42,7 +42,7 @@ async function loadRule(capability, requirements) {
 
   return RoutingRule.create({
     capability,
-    strategy: requirements.preferLowCost ? "lowest_cost" : "priority"
+    strategy: "priority"
   });
 }
 

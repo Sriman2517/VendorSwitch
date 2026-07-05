@@ -6,35 +6,58 @@ import Vendor from "../models/Vendor.js";
 
 dotenv.config();
 
-const capability = "PAN_VERIFICATION";
+const capabilities = ["PAN_VERIFICATION", "OCR", "SMS"];
 
 const vendors = [
   {
-    name: "VendorA",
-    capability,
+    name: "VendorPANFast",
+    capability: "PAN_VERIFICATION",
+    enabled: true,
     priority: 1,
     weight: 70,
     costPerRequest: 1.5,
     timeoutMs: 2000,
     rateLimitPerMinute: 100,
     supportedFeatures: ["PAN_STATUS", "NAME_MATCH"],
+    endpointUrl: "",
     health: {
-      status: "DEGRADED",
-      avgLatencyMs: 2400,
-      successRate: 94,
-      errorRate: 6,
-      availability: 94
+      status: "UP",
+      avgLatencyMs: 700,
+      successRate: 99,
+      errorRate: 1,
+      availability: 99
     }
   },
   {
-    name: "VendorB",
-    capability,
+    name: "VendorPANCheap",
+    capability: "PAN_VERIFICATION",
+    enabled: true,
     priority: 2,
     weight: 30,
-    costPerRequest: 1.2,
-    timeoutMs: 3000,
-    rateLimitPerMinute: 50,
-    supportedFeatures: ["PAN_STATUS", "NAME_MATCH", "LOW_COST"],
+    costPerRequest: 1,
+    timeoutMs: 2500,
+    rateLimitPerMinute: 60,
+    supportedFeatures: ["PAN_STATUS", "NAME_MATCH", "DOB_MATCH", "LOW_COST"],
+    endpointUrl: "",
+    health: {
+      status: "UP",
+      avgLatencyMs: 900,
+      successRate: 99,
+      errorRate: 1,
+      availability: 99
+    }
+  },
+  {
+    name: "VendorOCRFast",
+    capability: "OCR",
+    enabled: true,
+    priority: 1,
+    weight: 60,
+    costPerRequest: 2.5,
+    timeoutMs: 2500,
+    rateLimitPerMinute: 80,
+    supportedFeatures: ["TEXT_EXTRACTION", "IMAGE_QUALITY_CHECK"],
+    endpointUrl: "",
     health: {
       status: "UP",
       avgLatencyMs: 850,
@@ -44,29 +67,89 @@ const vendors = [
     }
   },
   {
-    name: "VendorC",
-    capability,
-    priority: 3,
-    weight: 20,
-    costPerRequest: 0.9,
-    timeoutMs: 2500,
-    rateLimitPerMinute: 30,
-    supportedFeatures: ["PAN_STATUS", "LOW_COST"],
+    name: "VendorOCRFull",
+    capability: "OCR",
+    enabled: true,
+    priority: 2,
+    weight: 40,
+    costPerRequest: 2,
+    timeoutMs: 3000,
+    rateLimitPerMinute: 50,
+    supportedFeatures: ["TEXT_EXTRACTION", "IMAGE_QUALITY_CHECK", "DOCUMENT_TYPE_DETECTION", "FIELD_CONFIDENCE"],
+    endpointUrl: "",
     health: {
       status: "UP",
-      avgLatencyMs: 1300,
-      successRate: 97,
-      errorRate: 3,
-      availability: 97
+      avgLatencyMs: 950,
+      successRate: 99,
+      errorRate: 1,
+      availability: 99
+    }
+  },
+  {
+    name: "VendorSMSFast",
+    capability: "SMS",
+    enabled: true,
+    priority: 1,
+    weight: 65,
+    costPerRequest: 0.4,
+    timeoutMs: 1500,
+    rateLimitPerMinute: 120,
+    supportedFeatures: ["OTP_DELIVERY", "DELIVERY_REPORT"],
+    endpointUrl: "",
+    health: {
+      status: "UP",
+      avgLatencyMs: 750,
+      successRate: 99,
+      errorRate: 1,
+      availability: 99
+    }
+  },
+  {
+    name: "VendorSMSReliable",
+    capability: "SMS",
+    enabled: true,
+    priority: 2,
+    weight: 35,
+    costPerRequest: 0.6,
+    timeoutMs: 2000,
+    rateLimitPerMinute: 90,
+    supportedFeatures: ["OTP_DELIVERY", "DLT_TEMPLATE", "DELIVERY_REPORT", "UNICODE_SMS"],
+    endpointUrl: "",
+    health: {
+      status: "UP",
+      avgLatencyMs: 900,
+      successRate: 99,
+      errorRate: 1,
+      availability: 99
     }
   }
 ];
 
 const rules = [
   {
-    capability,
-    strategy: "weighted",
+    capability: "PAN_VERIFICATION",
+    strategy: "lowest_latency",
+    fallbackStrategy: "priority",
+    thresholds: {
+      maxLatencyMs: 2000,
+      maxErrorRate: 5,
+      minAvailability: 95
+    }
+  },
+  {
+    capability: "OCR",
+    strategy: "lowest_cost",
     fallbackStrategy: "lowest_latency",
+    thresholds: {
+      maxLatencyMs: 2000,
+      maxErrorRate: 5,
+      minAvailability: 95
+    }
+  },
+  {
+    capability: "SMS",
+    strategy: "weighted",
+    fallbackStrategy: "priority",
     thresholds: {
       maxLatencyMs: 2000,
       maxErrorRate: 5,
@@ -77,12 +160,12 @@ const rules = [
 
 async function seed() {
   await connectDb();
-  await Vendor.deleteMany({ capability });
-  await RoutingRule.deleteMany({ capability });
+  await Vendor.deleteMany({ capability: { $in: capabilities } });
+  await RoutingRule.deleteMany({ capability: { $in: capabilities } });
   await Vendor.insertMany(vendors);
   await RoutingRule.insertMany(rules);
   await mongoose.connection.close();
-  console.log("Seeded PAN verification vendors and routing rules");
+  console.log("Seeded VendorSwitch sample vendors and routing rules");
 }
 
 seed().catch(async (error) => {

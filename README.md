@@ -24,28 +24,28 @@ VendorSwitch is an Intelligent Vendor Routing Platform for Assignment 2. It expo
 
 ```text
 VendorSwitch
-├── client
-│   └── src
-│       ├── api.js
-│       ├── App.jsx
-│       ├── main.jsx
-│       └── styles.css
-├── server
-│   └── src
-│       ├── config
-│       ├── controllers
-│       ├── middleware
-│       ├── models
-│       ├── routes
-│       ├── seed
-│       ├── services
-│       ├── app.js
-│       └── server.js
-├── sample-configs
-├── sample-requests
-├── ARCHITECTURE.md
-├── AI_USAGE.md
-└── README.md
+|-- client
+|   `-- src
+|       |-- api.js
+|       |-- App.jsx
+|       |-- main.jsx
+|       `-- styles.css
+|-- server
+|   `-- src
+|       |-- config
+|       |-- controllers
+|       |-- middleware
+|       |-- models
+|       |-- routes
+|       |-- seed
+|       |-- services
+|       |-- app.js
+|       `-- server.js
+|-- sample-configs
+|-- sample-requests
+|-- ARCHITECTURE.md
+|-- AI_USAGE.md
+`-- README.md
 ```
 
 ## Setup
@@ -66,7 +66,7 @@ SIMULATION_MODE=true
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
-3. Seed sample vendors and routing rule.
+3. Seed sample vendors and routing rules.
 
 ```bash
 npm --prefix server run seed
@@ -165,6 +165,20 @@ Returns cost, usage, latency, success rate, error rate, and availability per ven
 
 Returns request logs and routing decision explanations. Each log includes a `requestId` so one client call can be traced end to end.
 
+### GET `/health`
+
+Returns service health and implemented routing strategies.
+
+## Extra Config and AI APIs
+
+### POST `/routing-rules`
+
+Creates or updates the routing strategy, fallback strategy, and health thresholds for a capability.
+
+### GET `/routing-rules`
+
+Lists configured routing rules.
+
 ### AI assistant APIs
 
 These APIs support the optional AI Assistant page. They do not route traffic; they only generate recommendations and explanations.
@@ -172,20 +186,6 @@ These APIs support the optional AI Assistant page. They do not route traffic; th
 - `POST /ai/generate-rule`
 - `POST /ai/explain-decision`
 - `POST /ai/vendor-insight`
-
-### GET `/health`
-
-Returns service health and implemented routing strategies.
-
-## Extra Config API
-
-### POST `/routing-rules`
-
-Creates or updates the routing strategy and health thresholds for a capability.
-
-### GET `/routing-rules`
-
-Lists configured routing rules.
 
 ## Routing Strategies
 
@@ -209,5 +209,5 @@ VendorSwitch implements 7 strong strategies from the assignment list:
 - Sample API requests: `sample-requests/api-samples.http`
 - AI prompt samples: `sample-configs/sample-ai-prompts.md`
 - Architecture diagram: `ARCHITECTURE.md`
-- Explanation of routing decisions: `ARCHITECTURE.md`
+- Explanation of routing decisions: included separately in the submission document
 - AI usage note: `AI_USAGE.md`
