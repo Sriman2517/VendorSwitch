@@ -1,0 +1,201 @@
+{
+  "usage": "Use these examples from the Route Request page or POST /route. Latency and weighted selections are simulated, so exact latencyMs and SMS vendor selection can vary.",
+  "requests": [
+    {
+      "testName": "PAN verification using lowest latency",
+      "ruleToSaveFirst": {
+        "capability": "PAN_VERIFICATION",
+        "strategy": "lowest_latency",
+        "fallbackStrategy": "priority",
+        "thresholds": {
+          "maxLatencyMs": 2000,
+          "maxErrorRate": 5,
+          "minAvailability": 95
+        },
+        "enabled": true
+      },
+      "request": {
+        "capability": "PAN_VERIFICATION",
+        "payload": {
+          "pan": "ABCDE1234F",
+          "name": "Rahul Sharma"
+        },
+        "requirements": {
+          "maxLatencyMs": 2000,
+          "requiredFeatures": ["PAN_STATUS", "NAME_MATCH"]
+        }
+      },
+      "expectedOutput": {
+        "status": "SUCCESS",
+        "vendorUsed": "VendorPANFast",
+        "strategy": "lowest_latency",
+        "response": {
+          "panStatus": "VALID",
+          "nameMatch": true,
+          "normalizedName": "Rahul Sharma"
+        }
+      }
+    },
+    {
+      "testName": "OCR using lowest cost",
+      "ruleToSaveFirst": {
+        "capability": "OCR",
+        "strategy": "lowest_cost",
+        "fallbackStrategy": "lowest_latency",
+        "thresholds": {
+          "maxLatencyMs": 2000,
+          "maxErrorRate": 5,
+          "minAvailability": 95
+        },
+        "enabled": true
+      },
+      "request": {
+        "capability": "OCR",
+        "payload": {
+          "documentType": "AADHAAR",
+          "imageUrl": "https://example.com/sample-document.jpg"
+        },
+        "requirements": {
+          "maxLatencyMs": 2000,
+          "requiredFeatures": ["TEXT_EXTRACTION"]
+        }
+      },
+      "expectedOutput": {
+        "status": "SUCCESS",
+        "vendorUsed": "VendorOCRFull",
+        "strategy": "lowest_cost",
+        "response": {
+          "accepted": true,
+          "referenceId": "SIM-..."
+        }
+      }
+    },
+    {
+      "testName": "SMS using weighted routing",
+      "ruleToSaveFirst": {
+        "capability": "SMS",
+        "strategy": "weighted",
+        "fallbackStrategy": "priority",
+        "thresholds": {
+          "maxLatencyMs": 2000,
+          "maxErrorRate": 5,
+          "minAvailability": 95
+        },
+        "enabled": true
+      },
+      "request": {
+        "capability": "SMS",
+        "payload": {
+          "mobile": "9876543210",
+          "message": "Your OTP is 123456"
+        },
+        "requirements": {
+          "maxLatencyMs": 2000,
+          "requiredFeatures": ["OTP_DELIVERY"]
+        }
+      },
+      "expectedOutput": {
+        "status": "SUCCESS",
+        "vendorUsed": "VendorSMSFast or VendorSMSReliable",
+        "strategy": "weighted",
+        "response": {
+          "accepted": true,
+          "referenceId": "SIM-..."
+        }
+      }
+    },
+    {
+      "testName": "Feature-based routing with DOB_MATCH",
+      "ruleToSaveFirst": {
+        "capability": "PAN_VERIFICATION",
+        "strategy": "feature_based",
+        "fallbackStrategy": "priority",
+        "thresholds": {
+          "maxLatencyMs": 2000,
+          "maxErrorRate": 5,
+          "minAvailability": 95
+        },
+        "enabled": true
+      },
+      "request": {
+        "capability": "PAN_VERIFICATION",
+        "payload": {
+          "pan": "ABCDE1234F",
+          "name": "Rahul Sharma"
+        },
+        "requirements": {
+          "maxLatencyMs": 2000,
+          "requiredFeatures": ["DOB_MATCH"]
+        }
+      },
+      "expectedOutput": {
+        "status": "SUCCESS",
+        "vendorUsed": "VendorPANCheap",
+        "strategy": "feature_based",
+        "decisionTrace": "VendorPANFast is skipped because required features are missing."
+      }
+    },
+    {
+      "testName": "SMS Unicode feature route",
+      "ruleToSaveFirst": {
+        "capability": "SMS",
+        "strategy": "priority",
+        "fallbackStrategy": "lowest_latency",
+        "thresholds": {
+          "maxLatencyMs": 2000,
+          "maxErrorRate": 5,
+          "minAvailability": 95
+        },
+        "enabled": true
+      },
+      "request": {
+        "capability": "SMS",
+        "payload": {
+          "mobile": "9876543210",
+          "message": "Your OTP is 123456"
+        },
+        "requirements": {
+          "maxLatencyMs": 2000,
+          "requiredFeatures": ["UNICODE_SMS"]
+        }
+      },
+      "expectedOutput": {
+        "status": "SUCCESS",
+        "vendorUsed": "VendorSMSReliable",
+        "strategy": "priority"
+      }
+    },
+    {
+      "testName": "Fallback after timeout",
+      "setupBeforeTest": "Temporarily update VendorPANFast timeoutMs to 300, then restore it to 2000 after testing.",
+      "ruleToSaveFirst": {
+        "capability": "PAN_VERIFICATION",
+        "strategy": "priority",
+        "fallbackStrategy": "lowest_cost",
+        "thresholds": {
+          "maxLatencyMs": 2000,
+          "maxErrorRate": 5,
+          "minAvailability": 95
+        },
+        "enabled": true
+      },
+      "request": {
+        "capability": "PAN_VERIFICATION",
+        "payload": {
+          "pan": "ABCDE1234F",
+          "name": "Rahul Sharma"
+        },
+        "requirements": {
+          "maxLatencyMs": 2000,
+          "requiredFeatures": ["PAN_STATUS", "NAME_MATCH"]
+        }
+      },
+      "expectedOutput": {
+        "status": "SUCCESS",
+        "vendorUsed": "VendorPANCheap",
+        "strategy": "priority",
+        "decisionTrace": "VendorPANFast -> TIMEOUT, fallback strategy applied, VendorPANCheap -> SELECTED"
+      }
+    }
+  ]
+}

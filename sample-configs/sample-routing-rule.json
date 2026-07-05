@@ -1,0 +1,129 @@
+{
+  "usage": "Each item can be saved through POST /routing-rules. The app stores one active rule per capability, so saving another rule for the same capability updates that capability row. These seven examples cover every implemented strategy.",
+  "commonThresholds": {
+    "maxLatencyMs": 2000,
+    "maxErrorRate": 5,
+    "minAvailability": 95
+  },
+  "rules": [
+    {
+      "testName": "Priority routing",
+      "capability": "PAN_VERIFICATION",
+      "strategy": "priority",
+      "fallbackStrategy": "lowest_latency",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "testName": "Weighted routing",
+      "capability": "SMS",
+      "strategy": "weighted",
+      "fallbackStrategy": "priority",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "testName": "Lowest latency routing",
+      "capability": "PAN_VERIFICATION",
+      "strategy": "lowest_latency",
+      "fallbackStrategy": "priority",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "testName": "Lowest cost routing",
+      "capability": "OCR",
+      "strategy": "lowest_cost",
+      "fallbackStrategy": "lowest_latency",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "testName": "Failover routing",
+      "capability": "PAN_VERIFICATION",
+      "strategy": "failover",
+      "fallbackStrategy": "lowest_cost",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "testName": "Feature-based routing",
+      "capability": "PAN_VERIFICATION",
+      "strategy": "feature_based",
+      "fallbackStrategy": "priority",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "testName": "Health-based routing",
+      "capability": "OCR",
+      "strategy": "health_based",
+      "fallbackStrategy": "lowest_cost",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    }
+  ],
+  "recommendedDemoRules": [
+    {
+      "capability": "PAN_VERIFICATION",
+      "strategy": "lowest_latency",
+      "fallbackStrategy": "priority",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "capability": "OCR",
+      "strategy": "lowest_cost",
+      "fallbackStrategy": "lowest_latency",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    },
+    {
+      "capability": "SMS",
+      "strategy": "weighted",
+      "fallbackStrategy": "priority",
+      "thresholds": {
+        "maxLatencyMs": 2000,
+        "maxErrorRate": 5,
+        "minAvailability": 95
+      },
+      "enabled": true
+    }
+  ]
+}

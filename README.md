@@ -90,17 +90,19 @@ Registers or updates a vendor for a capability.
 
 ```json
 {
-  "name": "VendorB",
+  "name": "VendorPANFast",
   "capability": "PAN_VERIFICATION",
-  "priority": 2,
-  "weight": 30,
-  "costPerRequest": 1.2,
-  "timeoutMs": 3000,
-  "rateLimitPerMinute": 50,
-  "supportedFeatures": ["PAN_STATUS", "NAME_MATCH", "LOW_COST"],
+  "enabled": true,
+  "priority": 1,
+  "weight": 70,
+  "costPerRequest": 1.5,
+  "timeoutMs": 2000,
+  "rateLimitPerMinute": 100,
+  "supportedFeatures": ["PAN_STATUS", "NAME_MATCH"],
+  "endpointUrl": "",
   "health": {
     "status": "UP",
-    "avgLatencyMs": 850,
+    "avgLatencyMs": 700,
     "successRate": 99,
     "errorRate": 1,
     "availability": 99
@@ -125,7 +127,6 @@ Routes a unified client request to the best eligible vendor.
   },
   "requirements": {
     "maxLatencyMs": 2000,
-    "preferLowCost": true,
     "requiredFeatures": ["PAN_STATUS", "NAME_MATCH"]
   }
 }
@@ -137,10 +138,10 @@ Sample response:
 {
   "requestId": "7f8a55f9-5a35-4ef5-a6f1-5cbbfe42f4b2",
   "status": "SUCCESS",
-  "vendorUsed": "VendorB",
-  "routingReason": "VendorB selected using weighted strategy after eligibility checks",
-  "latencyMs": 850,
-  "cost": 1.2,
+  "vendorUsed": "VendorPANFast",
+  "routingReason": "VendorPANFast selected using lowest_latency strategy after eligibility checks",
+  "latencyMs": 700,
+  "cost": 1.5,
   "response": {
     "panStatus": "VALID",
     "nameMatch": true,
@@ -202,8 +203,11 @@ VendorSwitch implements 7 strong strategies from the assignment list:
 
 - Source code: included
 - README: included
-- Sample vendor configs: `sample-configs/`
-- Sample API requests/responses: `sample-requests/api-samples.http`
+- Sample vendor configs: `sample-configs/sample-vendors.json`
+- Sample routing configs: `sample-configs/sample-routing-rule.json`
+- Sample route requests/responses: `sample-configs/sample-route-request.json`
+- Sample API requests: `sample-requests/api-samples.http`
+- AI prompt samples: `sample-configs/sample-ai-prompts.md`
 - Architecture diagram: `ARCHITECTURE.md`
 - Explanation of routing decisions: `ARCHITECTURE.md`
 - AI usage note: `AI_USAGE.md`

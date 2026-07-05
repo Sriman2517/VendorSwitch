@@ -1,50 +1,34 @@
-### Health
-GET http://localhost:5000/health
+@baseUrl = http://localhost:5000
 
-### Register or update a vendor
-POST http://localhost:5000/vendors
+### 1. POST /vendors - Register sample vendor
+POST {{baseUrl}}/vendors
 Content-Type: application/json
 
 {
-  "name": "VendorB",
+  "name": "VendorPANFast",
   "capability": "PAN_VERIFICATION",
-  "priority": 2,
-  "weight": 30,
-  "costPerRequest": 1.2,
-  "timeoutMs": 3000,
-  "rateLimitPerMinute": 50,
-  "supportedFeatures": ["PAN_STATUS", "NAME_MATCH", "LOW_COST"],
+  "enabled": true,
+  "priority": 1,
+  "weight": 70,
+  "costPerRequest": 1.5,
+  "timeoutMs": 2000,
+  "rateLimitPerMinute": 100,
+  "supportedFeatures": ["PAN_STATUS", "NAME_MATCH"],
+  "endpointUrl": "",
   "health": {
     "status": "UP",
-    "avgLatencyMs": 850,
+    "avgLatencyMs": 700,
     "successRate": 99,
     "errorRate": 1,
     "availability": 99
   }
 }
 
-### List vendors
-GET http://localhost:5000/vendors?capability=PAN_VERIFICATION
+### 2. GET /vendors - List vendors
+GET {{baseUrl}}/vendors
 
-### Create or update a routing rule
-POST http://localhost:5000/routing-rules
-Content-Type: application/json
-
-{
-  "capability": "PAN_VERIFICATION",
-  "strategy": "weighted",
-  "thresholds": {
-    "maxLatencyMs": 2000,
-    "maxErrorRate": 5,
-    "minAvailability": 95
-  }
-}
-
-### List routing rules
-GET http://localhost:5000/routing-rules?capability=PAN_VERIFICATION
-
-### Route a PAN verification request
-POST http://localhost:5000/route
+### 3. POST /route - Route PAN verification request
+POST {{baseUrl}}/route
 Content-Type: application/json
 
 {
@@ -55,13 +39,42 @@ Content-Type: application/json
   },
   "requirements": {
     "maxLatencyMs": 2000,
-    "preferLowCost": true,
     "requiredFeatures": ["PAN_STATUS", "NAME_MATCH"]
   }
 }
 
-### Metrics
-GET http://localhost:5000/vendor-metrics?capability=PAN_VERIFICATION
+### 4. GET /vendor-metrics - Vendor metrics
+GET {{baseUrl}}/vendor-metrics
 
-### Routing logs
-GET http://localhost:5000/routing-logs?capability=PAN_VERIFICATION&limit=20
+### 5. GET /routing-logs - Routing decision logs
+GET {{baseUrl}}/routing-logs?limit=20
+
+### 6. GET /health - Service health
+GET {{baseUrl}}/health
+
+### POST /routing-rules - Save routing rule
+POST {{baseUrl}}/routing-rules
+Content-Type: application/json
+
+{
+  "capability": "PAN_VERIFICATION",
+  "strategy": "lowest_latency",
+  "fallbackStrategy": "priority",
+  "thresholds": {
+    "maxLatencyMs": 2000,
+    "maxErrorRate": 5,
+    "minAvailability": 95
+  },
+  "enabled": true
+}
+
+### GET /routing-rules - List routing rules
+GET {{baseUrl}}/routing-rules
+
+### AI API - Generate routing rule
+POST {{baseUrl}}/ai/generate-rule
+Content-Type: application/json
+
+{
+  "prompt": "Use Lowest Latency for PAN Verification. If latency exceeds 2000ms or error rate exceeds 5%, fallback to Priority Routing. Minimum availability should be 95%."
+}
